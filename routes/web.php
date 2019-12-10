@@ -1,5 +1,4 @@
-<?php
-
+    <?php
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -11,10 +10,40 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::group([
+    'namespace' => 'Services',
+    'as' => 'service.'
+], function () {
+    Route::get('create-token','CreateTokenController@index')->name('createToken');
+    Route::get('decode-token/{token}','CreateTokenController@decodeToken')->name('decodeToken');
 });
 
-Route::get('/Hello', function(){
-    return "Hello world";
-});
+require_once 'frontend.php';
+
+Route::get('switch-lang/{lang?}',function($lang = null){
+    App::setlocale($lang);
+    Session::put('lang',$lang);
+    LaravelLocalization::setLocale($lang);
+
+    $url = LaravelLocalization::getLocalizedURL(App::getLocale(),\URL::previous());
+
+    return Redirect::to($url);
+})->name('switchLang');
+
+/***************** FOR ADMIN *****************/
+require_once 'admin.php';
+
+/***************** END ADMIN *****************/
+
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
